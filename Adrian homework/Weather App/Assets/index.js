@@ -1,10 +1,14 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//////                         Globals                                          //////
+//////////////////////////////////////////////////////////////////////////////////////
+
 // Store the elements related to the city search.
 var citySearch = document.querySelector(".city-search");
 var searchBTN = document.querySelector(".search-button");
 
 // Store the elements related to the search history.
 var clearBTN = document.querySelector(".clear-history-button");
-var historyContainer = document.querySelector("history-container");
+var historyContainer = document.querySelector(".history-container");
 var searchHistory = [];
 
 // Store the elements related to the current city/weather.
@@ -17,11 +21,43 @@ var currentUVIndex = document.getElementById("UV-index");
 // Our key to access the openWeatherAPI.
 const API_KEY = "d49cc0dfd8837f8bf387ee4b861273fb";
 
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////                          Main                                            //////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
 // When the search button is clicked.
 searchBTN.addEventListener("click", function(){
+    storeSearch();
+    apiCalls(citySearch.value);
+})
+
+// Clear the search history.
+clearBTN.addEventListener("click", function(){
+    searchHistory = [];
+    localStorage.clear();
+    console.log(historyContainer.childElementCount)
+    while (historyContainer.firstChild){
+        historyContainer.removeChild(historyContainer.firstChild);
+    }
+})
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////                        Functions                                         //////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+function apiCalls(city){
     // Call the API.
     // The purpose of this call is to get the name/latitude/longitude of the city.
-    fetch("https://api.openweathermap.org/data/2.5/weather?q=" + citySearch.value + "&appid=" + API_KEY)
+    fetch("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + API_KEY)
     .then(response => response.json())
     .then(data => {
         // Store the name/latitude/longitude in variables.
@@ -37,9 +73,12 @@ searchBTN.addEventListener("click", function(){
         .then(data => {
             // Log all of the data from our API call.
             console.log(data);
+
+            var weatherIcon = data['current']['weather']['0']['icon'];
+            var iconURL="https://openweathermap.org/img/wn/"+weatherIcon +"@2x.png";
             // Get the current date.
             var date = new Date(data['current']['dt']*1000).toLocaleDateString();
-            cityName.textContent += " " + date;
+            cityName.innerHTML += " " + date + " <img src="+iconURL+">";
 
             // Start retrieving all of the required weather data.
             currentTemp.textContent = data['current']['temp'] + "°F";
@@ -48,4 +87,30 @@ searchBTN.addEventListener("click", function(){
             currentUVIndex.textContent = data['current']['uvi'];
         })
     })
-})
+}
+
+function storeSearch(){
+    if (!searchHistory.includes(citySearch.value)){
+        searchHistory.push(citySearch.value);
+        createEle(citySearch.value);
+    }
+    for (i = 0; i < searchHistory.length; i++){
+        localStorage.setItem(i, searchHistory[i]);
+    }
+}
+
+function createEle(value){
+    var newEle = document.createElement("li");
+    newEle.classList.add("prev-search");
+    newEle.classList.add("list-group-item");
+    newEle.textContent = value.toUpperCase();
+    historyContainer.appendChild(newEle);
+
+    addClickEvents(newEle);
+}
+
+function addClickEvents(ele){
+    ele.addEventListener("click", function(){
+        apiCalls(ele.textContent);
+    })
+}
