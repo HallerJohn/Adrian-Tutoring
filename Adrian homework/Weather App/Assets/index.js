@@ -22,7 +22,6 @@ var currentUVIndex = document.getElementById("UV-index");
 const API_KEY = "d49cc0dfd8837f8bf387ee4b861273fb";
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////
 //////                          Main                                            //////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +37,6 @@ searchBTN.addEventListener("click", function(){
 clearBTN.addEventListener("click", function(){
     searchHistory = [];
     localStorage.clear();
-    console.log(historyContainer.childElementCount)
     while (historyContainer.firstChild){
         historyContainer.removeChild(historyContainer.firstChild);
     }
@@ -53,7 +51,7 @@ clearBTN.addEventListener("click", function(){
 //////                        Functions                                         //////
 //////////////////////////////////////////////////////////////////////////////////////
 
-
+// Used to call the openWeather API.
 function apiCalls(city){
     // Call the API.
     // The purpose of this call is to get the name/latitude/longitude of the city.
@@ -74,11 +72,13 @@ function apiCalls(city){
             // Log all of the data from our API call.
             console.log(data);
 
+            // Set the URL for the weather icon.
             var weatherIcon = data['current']['weather']['0']['icon'];
             var iconURL="https://openweathermap.org/img/wn/"+weatherIcon +"@2x.png";
+
             // Get the current date.
             var date = new Date(data['current']['dt']*1000).toLocaleDateString();
-            cityName.innerHTML += " " + date + " <img src="+iconURL+">";
+            cityName.innerHTML += " " + date + "<img src="+iconURL+">";
 
             // Start retrieving all of the required weather data.
             currentTemp.textContent = data['current']['temp'] + "°F";
@@ -88,6 +88,7 @@ function apiCalls(city){
         })
     })
 }
+
 
 function storeSearch(){
     if (!searchHistory.includes(citySearch.value)){
