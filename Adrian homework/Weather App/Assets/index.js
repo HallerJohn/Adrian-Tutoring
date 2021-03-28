@@ -30,17 +30,39 @@ const API_KEY = "d49cc0dfd8837f8bf387ee4b861273fb";
 
 // When the search button is clicked.
 searchBTN.addEventListener("click", function(){
-    storeSearch();
     apiCalls(citySearch.value);
+})
+
+// When the search bar is clicked into.
+citySearch.addEventListener("focus", function(){
+    // Clear any previous text.
+    citySearch.value = "";
 })
 
 // Clear the search history.
 clearBTN.addEventListener("click", function(){
     searchHistory = [];
     localStorage.clear();
-    console.log(historyContainer.childElementCount)
     while (historyContainer.firstChild){
         historyContainer.removeChild(historyContainer.firstChild);
+    }
+})
+
+// When the page loads/reloads.
+window.addEventListener("load", function(){
+    // Get the list of cities from local storage.
+    var entry = JSON.parse(localStorage.getItem("searchHistory"))
+    // If the list is not null make the history the list from storage.
+    // If the list is null make the history blank.
+    searchHistory = (entry)? entry : [];
+
+    // Create the new elements for each item in history.
+    for (i = 0; i < searchHistory.length; i++){
+        createEle(searchHistory[i]);
+    }
+    // Call the API for the most recently added city.
+    if (entry){
+        apiCalls(searchHistory[searchHistory.length - 1]);
     }
 })
 
@@ -74,6 +96,8 @@ function apiCalls(city){
             // Log all of the data from our API call.
             console.log(data);
 
+            storeSearch(city);
+
             var weatherIcon = data['current']['weather']['0']['icon'];
             var iconURL="https://openweathermap.org/img/wn/"+weatherIcon +"@2x.png";
             // Get the current date.
@@ -84,33 +108,91 @@ function apiCalls(city){
             currentTemp.textContent = data['current']['temp'] + "°F";
             currentHumid.textContent = data['current']['humidity'] + "%";
             currentWindSpeed.textContent = data['current']['wind_speed'] + "mph";
-            currentUVIndex.textContent = data['current']['uvi'];
+
+            // Logic for the UV index indicator
+            var uvi = data['current']['uvi'];
+            var uviIndicator = ""
+            // These tags use bootstrap to change the color of the UV index element.
+            if (uvi <= 2){
+                uviIndicator = "bg-success";
+            } else if (uvi > 2 && uvi <= 5){
+                uviIndicator = "bg-warning";
+            } else if (uvi > 5){
+                uviIndicator = "bg-danger";
+            }
+            // Remove any of the tags from previous searches.
+            currentUVIndex.classList.remove("bg-success");
+            currentUVIndex.classList.remove("bg-warning");
+            currentUVIndex.classList.remove("bg-danger");
+
+            // Add the class to the element
+            currentUVIndex.classList.add(uviIndicator);
+            currentUVIndex.textContent = uvi;
+
+            // Collect data for the future forecast.
+            futureForecast(data);
         })
     })
 }
 
-function storeSearch(){
-    if (!searchHistory.includes(citySearch.value)){
-        searchHistory.push(citySearch.value);
-        createEle(citySearch.value);
+// Store the search history in both an array, and in local storage.
+function storeSearch(city){
+    // If the array does NOT(!) contain the city.
+    if (!searchHistory.includes(city)){
+        // Add the city to the array.
+        searchHistory.push(city);
+        // Create a new element that goes into the search history container.
+        createEle(city);
     }
-    for (i = 0; i < searchHistory.length; i++){
-        localStorage.setItem(i, searchHistory[i]);
-    }
+    // Store the array in local storage.
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+    console.log(searchHistory);
 }
 
+// Create a new element for the newly searched city.
 function createEle(value){
+    // Create a new list element.
     var newEle = document.createElement("li");
+    // Add this class tag for use in css.
     newEle.classList.add("prev-search");
+    // Add this class tag for bootstrap use.
     newEle.classList.add("list-group-item");
+    // Update the text content of the new element to the city name.
     newEle.textContent = value.toUpperCase();
+
+    // Add the new element to the container.
     historyContainer.appendChild(newEle);
 
-    addClickEvents(newEle);
+    // Add event listner for clicking to the new element.
+    newEle.addEventListener("click", function(){
+        // Call the API when the element is clicked.
+        apiCalls(newEle.textContent.toLowerCase());
+    })
 }
 
-function addClickEvents(ele){
-    ele.addEventListener("click", function(){
-        apiCalls(ele.textContent);
-    })
+// Gather weather data for the future forecast.
+function futureForecast(data){
+    // Max number of days that will be forecasted.
+    const MAX_FORECAST = 5;
+    // Go through each of the days.
+    for (i = 0; i < MAX_FORECAST; i++){
+        // Get each element needed for that day.
+        var currDate = document.getElementById("forecastDate" + i);
+        var currIcon = document.getElementById("forecastImg" + i);
+        var currTemp = document.getElementById("forecastTemp" + i);
+        var currHumid = document.getElementById("forecastHumidity" + i);
+
+        // Create the new date for the current day.
+        var date = new Date(data["daily"][i]['dt']*1000).toLocaleDateString();
+        currDate.textContent = date;
+
+        // Get the weather icon to be used for the current day.
+        var weatherIcon = data['daily'][i]['weather']['0']['icon'];
+        var iconURL="https://openweathermap.org/img/wn/"+weatherIcon +"@2x.png";
+        currIcon.innerHTML = "<img src="+iconURL+">";
+
+        // Gather the temperature and humidity for the current day.
+        currTemp.textContent = data['daily'][i]['temp']['day'] + "°F";
+        currHumid.textContent = data['daily'][i]['humidity'] + "%";
+    }
 }

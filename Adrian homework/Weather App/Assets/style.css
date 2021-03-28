@@ -29,9 +29,13 @@ body {
 }
 
 .forecast {
+    padding-top: 10px;
+    padding-left: 10px;
     border-radius: 5%;
     color: white;
     margin: 5px;
+    font-size: 15px;
+    width: 135px;
 }
 
 .city-search {
