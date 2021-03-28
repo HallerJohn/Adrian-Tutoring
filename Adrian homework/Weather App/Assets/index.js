@@ -22,7 +22,6 @@ var currentUVIndex = document.getElementById("UV-index");
 const API_KEY = "d49cc0dfd8837f8bf387ee4b861273fb";
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////
 //////                          Main                                            //////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +74,7 @@ window.addEventListener("load", function(){
 //////                        Functions                                         //////
 //////////////////////////////////////////////////////////////////////////////////////
 
-
+// Used to call the openWeather API.
 function apiCalls(city){
     // Call the API.
     // The purpose of this call is to get the name/latitude/longitude of the city.
@@ -98,11 +97,13 @@ function apiCalls(city){
 
             storeSearch(city);
 
+            // Set the url for weather Icon.
             var weatherIcon = data['current']['weather']['0']['icon'];
             var iconURL="https://openweathermap.org/img/wn/"+weatherIcon +"@2x.png";
+
             // Get the current date.
             var date = new Date(data['current']['dt']*1000).toLocaleDateString();
-            cityName.innerHTML += " " + date + " <img src="+iconURL+">";
+            cityName.innerHTML += " " + date + "<img src="+iconURL+">";
 
             // Start retrieving all of the required weather data.
             currentTemp.textContent = data['current']['temp'] + "°F";
