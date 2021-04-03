@@ -60,11 +60,43 @@ body {
     font-size: 20px;
 }
 
-li:hover{
-    background-color: lightslategray;
-    text-decoration: underline;
-}
-
 .button-row{
     text-align: center;
 } 
+
+#representative-info {
+    text-align: center;
+    background-color: teal;
+    padding: 0px;
+    margin: 0px;
+}
+
+.senate-container {
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+}
+
+#home-btn {
+    height: 50px;
+    width: 75px;
+}
+
+#address-input {
+    height: 50px;
+    width: 300px;
+}
+
+#address-btn {
+    height: 50px;
+    width: 75px;
+}
+
+#representatives {
+    height: 50px;
+    width: 200px;
+}
+
+#clear-history {
+    height: 50px;
+}
