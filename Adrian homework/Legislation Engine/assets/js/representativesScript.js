@@ -58,7 +58,7 @@ clearBtn.addEventListener("click", function(){
 function callAPI(address){
     // The Google Civic Information API call, uses my API key and a given Address.
     // This call gets the Legislative Upper Body.
-    fetch(`https://civicinfo.googleapis.com/civicinfo/v2/representatives?address=${address}&roles=legislatorUpperBody&key=${API_KEY}`)
+    fetch(`https://civicinfo.googleapis.com/civicinfo/v2/representatives?address=${address}&roles=legislatorUpperBody&key=${process.env}`)
     .then(response => response.json())
     .then(data => {
         console.log(data);
@@ -176,4 +176,3 @@ function clearResults(){
     header.innerHTML = "House";
     assemblyCont.appendChild(header);
 }
-
