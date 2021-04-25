@@ -1,0 +1,21 @@
+.jumbotron {
+    text-align: center;
+    font-size: 120px;
+    background-color: #5bc0de;
+}
+
+.list-group-item {
+    background-color: #f7f7f7;
+}
+.name {
+    font-size: 60px;
+}
+.Manager {
+    background-color: #0275d8;
+}
+.Engineer {
+    background-color: #5cb85c;
+}
+.Intern {
+    background-color: #f0ad4e;
+}
