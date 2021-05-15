@@ -26,13 +26,11 @@ A backend application designed to be used for ecommerce. Used node.js, MySQL2, E
 
 ![DB Setup and Start](https://drive.google.com/file/d/16RqPMJpsuQjqIZ8CHAG1wMyqW-tkLJK9/view)
 
-![GET All](./animations/GET%20all.gif)
+![Category Routes]()
 
-![GET All by ID](./animations/GET%20by%20ID.gif)
+![Tag Routes]()
 
-![POST PUT DELETE Products and Tags](./animations/POST%20PUT%20DELETE%20Tags%20and%20Products.gif)
-
-![POST PUT DELETE Categories](./animations/POST%20PUT%20DELETE%20Categories.gif)
+![Product Routes]()
   
 
 
